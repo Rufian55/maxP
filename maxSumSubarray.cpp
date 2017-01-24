@@ -9,6 +9,8 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+using std::cout;
+using std::cin;
 
 int main() {
 	std::vector<std::vector<int> > allData;	// 2D final vector.
@@ -22,13 +24,20 @@ int main() {
 		std::stringstream inputStream(eachLine);
 
 		while (inputStream >> eachInt) {
-
-			// Some vague test comment...
 			// Add the ints from each line to the 1D vector.
 			lineData.push_back(eachInt);
 		}
 		// Push the 1D vector onto the 2D vector as one "line".
 		allData.push_back(lineData);
 	}
+	
+	for (unsigned int i = 0; i < allData.size(); i++) {
+		for (unsigned int j = 0; j < allData[i].size(); j++) {
+			cout << allData[i][j];
+			cout << " ";
+		}
+		cout << "\n";
+	}
+
 	return 0;
 }
