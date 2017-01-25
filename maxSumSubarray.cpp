@@ -10,7 +10,6 @@
 #include <sstream>
 #include <iostream>
 using std::cout;
-using std::cin;
 
 // Prototypes.
 void maxSumSubArray_1(std::vector<std::vector<int> > allData, std::vector<std::vector<int> > &results);
@@ -37,26 +36,9 @@ int main() {
 	}
 	inputFile.close();
 
-	// Open the results file for writing.
-	std::ofstream resultFile("MSS_Results.txt");
-
 	// Find the maxSumSubarray. Vector results modified in place.
 	maxSumSubArray_1(allData, results);
 
-		// Write the 2D results vector to file.
-/*		for (unsigned int h = 0; h < results.size(); h += 3) {
-			for (unsigned int i = 0; i < results.size(); i++) {
-				for (unsigned int j = 0; j < results[i].size(); j++) {
-					resultFile << results[i][j];
-					resultFile << " ";
-				}
-				resultFile << "\n";
-			}
-			resultFile << "\n";
-		}
-	}
-*/
-	resultFile.close();
 	return 0;
 }
 
@@ -107,8 +89,11 @@ void maxSumSubArray_1(std::vector<std::vector<int> > allData, std::vector<std::v
 	results.push_back(mssTotal);
 	}
 
+	// Open the results file for writing.
+	std::ofstream resultFile("MSS_Results.txt");
+
 	int skipLines = 0;
-	// Test print results.  works!
+	// Test print results.  Change "cout" to "resultFile" for file writing.
 	for (unsigned int i = 0; i < results.size(); i++) {
 		skipLines++;
 		for (unsigned int j = 0; j < results[i].size(); j++) {
@@ -120,4 +105,6 @@ void maxSumSubArray_1(std::vector<std::vector<int> > allData, std::vector<std::v
 			cout << '\n';
 		}
 	}
+
+	resultFile.close();
 }
