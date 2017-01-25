@@ -1,8 +1,13 @@
 /******************************************************************************
+* cs325-400-W17	Analysis of Algorithms	29 Jan 2017	Project 1
+* Jonathon Horton	hortonjo@oregonstate.edu
+* Chris Kearns		kearnsc@oregonstate.edu
+* Dustin Pack		packdu@oregonstate.edu
+*
 * Program maxSumSubarray.cpp reads a text file of space delimited ints and 
-* writes the Maximum Sum Subarray and sum of each line to a seperate text file. 
-* Compile with: g++ maxSumSubarray.cpp -o maxSum -g -Wall
-* cs325-400-W17	29 Jan 2017	Project 1
+* appends the Maximum Sum Subarray and sum of each line to a seperate text
+* file. Compile with: g++ maxSumSubarray.cpp -o maxSum -g -Wall
+* Call from CLI: "maxSum 1" to show with execution times, "maxSum 0" otherwise.
 ******************************************************************************/
 #include <vector>
 #include <string>
@@ -11,13 +16,39 @@
 #include <iostream>
 using std::cout;
 #include <sys/stat.h>
+#include <ctime>
+#include <cstdlib>
+
+class Timer {
+	private:
+		timespec begin, end;
+	public:
+		Timer() { clock_gettime(CLOCK_REALTIME, &begin); }
+		double elapsed() {
+			clock_gettime(CLOCK_REALTIME, &end);
+			return end.tv_sec - begin.tv_sec + (end.tv_nsec - begin.tv_nsec);
+	}
+	void reset() {
+		clock_gettime(CLOCK_REALTIME, &begin);
+	}
+
+};
+
 
 // Prototypes.
-void maxSumSubArray_1(std::vector<std::vector<int> > allData, std::vector<std::vector<int> > &results);
+void maxSumSubArray_1(std::vector<std::vector<int> > allData, std::vector<std::vector<int> > &results, int showTime);
 bool fileExists(std::string fileName);
 void append2file(std::vector<std::vector<int> > &results);
 
-int main() {
+int main(int argc, char** argv) {
+	if (argc != 2 || atoi(argv[1]) < 0 || atoi(argv[1]) > 1) {
+		cout << "Usage: \"maxSum 1\" or \"maxSum 0\"\n" <<
+			"0 for do not show execution times, 1 otherwise.\n";
+		exit(1);
+	}
+
+	int showTime = atoi(argv[1]);
+
 	std::vector<std::vector<int> > allData;	// 2D input vector.
 	std::vector<std::vector<int> > results;	// 2d results vector.
 
@@ -39,8 +70,8 @@ int main() {
 	}
 	inputFile.close();
 
-	// Since we will have multiple write/append calls, we delete MSS_Results.txt
-	//  first to ensure a "clean start".
+	// Since we will have multiple write/append calls, we delete the old
+	// MSS_Results.txt file first to ensure a "clean start".
 	if (fileExists("MSS_Results.txt")) {
 		if (remove("MSS_Results.txt") != 0) {
 			perror("Error deleting old MSS_Results.txt: ");
@@ -48,13 +79,13 @@ int main() {
 	}
 
 	// Find the maxSumSubarray and append to MSS_Results.txt. Vector results modified in place.
-	maxSumSubArray_1(allData, results);
+	maxSumSubArray_1(allData, results, showTime);
 
 	return 0;
 }
 
 
-void maxSumSubArray_1(std::vector<std::vector<int> > allData, std::vector<std::vector<int> > &results) {
+void maxSumSubArray_1(std::vector<std::vector<int> > allData, std::vector<std::vector<int> > &results, int showTime) {
 
 	// 1D int vector to capture the maxSumSubarray elements.
 	std::vector<int> resultsData;
@@ -65,9 +96,13 @@ void maxSumSubArray_1(std::vector<std::vector<int> > allData, std::vector<std::v
 	// Clear 2D results vector (passed by ref, so old 1D vectors still hanging around).
 	results.clear();
 
+	Timer algoTime;
+
 	// Determine max sum of subarray with brute force method.
 	for (unsigned int lineNum = 0; lineNum < allData.size(); lineNum++) {
 		// TIME FROM HERE...
+		double start = algoTime.elapsed();
+
 		int maxSum = allData[lineNum][0];
 		unsigned int maxSumStart = 0, maxSumEnd = 0;
 
@@ -84,8 +119,15 @@ void maxSumSubArray_1(std::vector<std::vector<int> > allData, std::vector<std::v
 				j--;
 			}
 		}
+
 		// ...TO HERE!
-	
+		algoTime.reset();
+		double stop = algoTime.elapsed();
+		// execTime a global.
+		double execTime = ((start - stop) / (double)CLOCKS_PER_SEC);
+		if (showTime) {
+			cout << std::fixed << "Elapsed time for maxSumSubArray, lineNum: " << lineNum + 1 << " = " << execTime << '\n';
+		}
 
 		// Push the allData[lineNum] onto results.
 		results.push_back(allData[lineNum]);
@@ -113,6 +155,7 @@ bool fileExists(std::string fileName) {
 	struct stat buffer;
 	return (stat(fileName.c_str(), &buffer) == 0);
 }
+
 
 // Appends results data to text file.
 void append2file(std::vector<std::vector<int> > &results) {
