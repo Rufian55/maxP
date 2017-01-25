@@ -10,9 +10,12 @@
 #include <sstream>
 #include <iostream>
 using std::cout;
+#include <sys/stat.h>
 
 // Prototypes.
 void maxSumSubArray_1(std::vector<std::vector<int> > allData, std::vector<std::vector<int> > &results);
+bool fileExists(std::string fileName);
+void append2file(std::vector<std::vector<int> > &results);
 
 int main() {
 	std::vector<std::vector<int> > allData;	// 2D input vector.
@@ -36,7 +39,15 @@ int main() {
 	}
 	inputFile.close();
 
-	// Find the maxSumSubarray. Vector results modified in place.
+	// Since we will have multiple write/append calls, we delete MSS_Results.txt
+	//  first to ensure a "clean start".
+	if (fileExists("MSS_Results.txt")) {
+		if (remove("MSS_Results.txt") != 0) {
+			perror("Error deleting old MSS_Results.txt: ");
+		}
+	}
+
+	// Find the maxSumSubarray and append to MSS_Results.txt. Vector results modified in place.
 	maxSumSubArray_1(allData, results);
 
 	return 0;
@@ -51,6 +62,10 @@ void maxSumSubArray_1(std::vector<std::vector<int> > allData, std::vector<std::v
 	// 1D int vector (of length 1) to capture the maxSumSubarray total. 
 	std::vector<int> mssTotal;
 
+	// Clear 2D results vector (passed by ref, so old 1D vectors still hanging around).
+	results.clear();
+
+	// Determine max sum of subarray with brute force method.
 	for (unsigned int lineNum = 0; lineNum < allData.size(); lineNum++) {
 		// TIME FROM HERE...
 		int maxSum = allData[lineNum][0];
@@ -71,26 +86,39 @@ void maxSumSubArray_1(std::vector<std::vector<int> > allData, std::vector<std::v
 		}
 		// ...TO HERE!
 	
-	// Push the allData[lineNum] onto results.
-	results.push_back(allData[lineNum]);
 
-	// Push allData[lineNum][i] from index maxSumStart to maxSumEnd onto resultsData.
-	resultsData.clear();
-	for (unsigned int i = maxSumStart; i <= maxSumEnd; i++) {
-		resultsData.push_back(allData[lineNum][i]);
+		// Push the allData[lineNum] onto results.
+		results.push_back(allData[lineNum]);
+
+		// Push allData[lineNum][i] from index maxSumStart to maxSumEnd onto resultsData.
+		resultsData.clear();
+		for (unsigned int i = maxSumStart; i <= maxSumEnd; i++) {
+			resultsData.push_back(allData[lineNum][i]);
+		}
+
+		// Push resultsData onto results.
+		results.push_back(resultsData);
+
+		// Push maxSum onto results[++i]
+		mssTotal.clear();
+		mssTotal.push_back(maxSum);
+		results.push_back(mssTotal);
 	}
+	append2file(results);
+}
 
-	// Push resultsData onto results.
-	results.push_back(resultsData);
 
-	// push maxSum onto results[++i]
-	mssTotal.clear();
-	mssTotal.push_back(maxSum);
-	results.push_back(mssTotal);
-	}
+// Uses stat() to check for file existence. [1]
+bool fileExists(std::string fileName) {
+	struct stat buffer;
+	return (stat(fileName.c_str(), &buffer) == 0);
+}
 
-	// Open the results file for writing.
-	std::ofstream resultFile("MSS_Results.txt");
+// Appends results data to text file.
+void append2file(std::vector<std::vector<int> > &results) {
+
+	// Open the results file for appending.	[2]
+	std::ofstream resultFile("MSS_Results.txt", std::ios_base::app);
 
 	int skipLines = 0;
 	// Test print results.  Change "cout" to "resultFile" for file writing.
@@ -105,6 +133,11 @@ void maxSumSubArray_1(std::vector<std::vector<int> > allData, std::vector<std::v
 			cout << '\n';
 		}
 	}
-
 	resultFile.close();
 }
+
+
+/* CITATIONS: Code adapted from the following sources:
+[1] http://stackoverflow.com/questions/12774207/fastest-way-to-check-if-a-file-exist-using-standard-c-c11-c
+[2] http://stackoverflow.com/questions/26084885/appending-to-a-file-with-ofstream
+*/
