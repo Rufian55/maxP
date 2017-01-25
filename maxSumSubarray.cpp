@@ -23,7 +23,9 @@ class Timer {
 	private:
 		timespec begin, end;
 	public:
-		Timer() { clock_gettime(CLOCK_REALTIME, &begin); }
+		Timer() {
+			clock_gettime(CLOCK_REALTIME, &begin);
+		}
 		double elapsed() {
 			clock_gettime(CLOCK_REALTIME, &end);
 			return end.tv_sec - begin.tv_sec + (end.tv_nsec - begin.tv_nsec);
@@ -37,6 +39,9 @@ class Timer {
 
 // Prototypes.
 void maxSumSubArray_1(std::vector<std::vector<int> > allData, std::vector<std::vector<int> > &results, int showTime);
+void maxSumSubArray_2(std::vector<std::vector<int> > allData, std::vector<std::vector<int> > &results, int showTime);
+void maxSumSubArray_3();
+void maxSumSubArray_4();
 bool fileExists(std::string fileName);
 void append2file(std::vector<std::vector<int> > &results);
 
@@ -80,6 +85,9 @@ int main(int argc, char** argv) {
 
 	// Find the maxSumSubarray and append to MSS_Results.txt. Vector results modified in place.
 	maxSumSubArray_1(allData, results, showTime);
+	maxSumSubArray_2(allData, results, showTime);
+	maxSumSubArray_3();
+	maxSumSubArray_4();
 
 	return 0;
 }
@@ -98,22 +106,23 @@ void maxSumSubArray_1(std::vector<std::vector<int> > allData, std::vector<std::v
 
 	Timer algoTime;
 
-	// Determine max sum of subarray with brute force method.
+	/* Determine max sum of subarray with brute force method. All posible combinations
+	   of subarrays checked. O(n^3) [3] */
 	for (unsigned int lineNum = 0; lineNum < allData.size(); lineNum++) {
 		// TIME FROM HERE...
 		double start = algoTime.elapsed();
 
 		int maxSum = allData[lineNum][0];
-		unsigned int maxSumStart = 0, maxSumEnd = 0;
+		unsigned int maxSumBegin = 0, maxSumEnd = 0;
 
 		for (unsigned int i = 1; i < allData[lineNum].size(); i++) {
-			int tempSum = 0;
+			int temp = 0;
 			int j = i;
 			while (j >= 0) {
-				tempSum += allData[lineNum][j];
-				if (tempSum > maxSum) {
-					maxSum = tempSum;
-					maxSumStart = j;
+				temp += allData[lineNum][j];
+				if (temp > maxSum) {
+					maxSum = temp;
+					maxSumBegin = j;
 					maxSumEnd = i;
 				}
 				j--;
@@ -134,7 +143,7 @@ void maxSumSubArray_1(std::vector<std::vector<int> > allData, std::vector<std::v
 
 		// Push allData[lineNum][i] from index maxSumStart to maxSumEnd onto resultsData.
 		resultsData.clear();
-		for (unsigned int i = maxSumStart; i <= maxSumEnd; i++) {
+		for (unsigned int i = maxSumBegin; i <= maxSumEnd; i++) {
 			resultsData.push_back(allData[lineNum][i]);
 		}
 
@@ -150,6 +159,83 @@ void maxSumSubArray_1(std::vector<std::vector<int> > allData, std::vector<std::v
 }
 
 
+void maxSumSubArray_2(std::vector<std::vector<int> > allData, std::vector<std::vector<int> > &results, int showTime) {
+
+	// 1D int vector to capture the maxSumSubarray elements.
+	std::vector<int> resultsData;
+
+	// 1D int vector (of length 1) to capture the maxSumSubarray total. 
+	std::vector<int> mssTotal;
+
+	// Clear 2D results vector (passed by ref, so old 1D vectors still hanging around).
+	results.clear();
+
+	Timer algoTime;
+
+	/* Determine max sum of subarray with brute force method. Keeps track of largest
+		subarray checked during iteration. O(n^2) [3] */
+	for (unsigned int lineNum = 0; lineNum < allData.size(); lineNum++) {
+		// TIME FROM HERE...
+		double start = algoTime.elapsed();
+
+		int maxSum = allData[lineNum][0];
+		unsigned int maxSumBegin = 0, maxSumEnd = 0;
+
+		for (unsigned int i = 1; i < allData[lineNum].size(); i++) {
+			int temp = 0;
+			int j = i;
+			int start = maxSumBegin;
+			while (j >= start) {
+				temp += allData[lineNum][j];
+				if (temp > maxSum) {
+					maxSum = temp;
+					maxSumBegin = j;
+					maxSumEnd = i;
+				}
+				j--;
+			}
+		}
+
+		// ...TO HERE!
+		algoTime.reset();
+		double stop = algoTime.elapsed();
+		// execTime a global.
+		double execTime = ((start - stop) / (double)CLOCKS_PER_SEC);
+		if (showTime) {
+			cout << std::fixed << "Elapsed time for maxSumSubArray, lineNum: " << lineNum + 1 << " = " << execTime << '\n';
+		}
+
+		// Push the allData[lineNum] onto results.
+		results.push_back(allData[lineNum]);
+
+		// Push allData[lineNum][i] from index maxSumStart to maxSumEnd onto resultsData.
+		resultsData.clear();
+		for (unsigned int i = maxSumBegin; i <= maxSumEnd; i++) {
+			resultsData.push_back(allData[lineNum][i]);
+		}
+
+		// Push resultsData onto results.
+		results.push_back(resultsData);
+
+		// Push maxSum onto results[++i]
+		mssTotal.clear();
+		mssTotal.push_back(maxSum);
+		results.push_back(mssTotal);
+	}
+	append2file(results);
+}
+
+
+void maxSumSubArray_3() {
+
+}
+
+
+void maxSumSubArray_4() {
+
+}
+
+
 // Uses stat() to check for file existence. [1]
 bool fileExists(std::string fileName) {
 	struct stat buffer;
@@ -157,7 +243,7 @@ bool fileExists(std::string fileName) {
 }
 
 
-// Appends results data to text file.
+// Appends results data to text file. 
 void append2file(std::vector<std::vector<int> > &results) {
 
 	// Open the results file for appending.	[2]
@@ -168,12 +254,17 @@ void append2file(std::vector<std::vector<int> > &results) {
 	for (unsigned int i = 0; i < results.size(); i++) {
 		skipLines++;
 		for (unsigned int j = 0; j < results[i].size(); j++) {
-			cout << results[i][j];
-			cout << " ";
+//			cout << results[i][j];
+			resultFile << results[i][j];
+//			cout << " ";
+			resultFile << " ";
+
 		}
-		cout << '\n';
+//		cout << '\n';
+		resultFile << '\n';
 		if (skipLines % 3 == 0) {
-			cout << '\n';
+//			cout << '\n';
+			resultFile << '\n';
 		}
 	}
 	resultFile.close();
@@ -183,4 +274,5 @@ void append2file(std::vector<std::vector<int> > &results) {
 /* CITATIONS: Code adapted from the following sources:
 [1] http://stackoverflow.com/questions/12774207/fastest-way-to-check-if-a-file-exist-using-standard-c-c11-c
 [2] http://stackoverflow.com/questions/26084885/appending-to-a-file-with-ofstream
+[3] http://cpluspluscode.blogspot.com/2012/11/maximum-subarray-problem.html
 */
