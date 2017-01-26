@@ -19,7 +19,7 @@ using std::cout;
 #include <cstdlib>
 #include <unordered_map>
 #include <climits>
-
+#include <limits>
 
 class Timer {
 private:
@@ -44,7 +44,7 @@ void maxSumSubArray_1(std::vector<std::vector<int> > allData, std::vector<std::v
 void maxSumSubArray_2(std::vector<std::vector<int> > allData, std::vector<std::vector<int> > &results, int showTime);
 int maxSumSubArray_3(std::vector<int> input, int start, int end);
 std::vector<int> getSubArray(std::vector<int> input);
-void maxSumSubArray_4();
+void maxSumSubArray_4(std::vector<std::vector<int> > allData, std::vector<std::vector<int> > &results, int showTime);
 bool fileExists(std::string fileName);
 void append2file(std::vector<std::vector<int> > &results);
 int MaxSuffix(std::vector<int> arr, int start, int end);
