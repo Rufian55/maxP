@@ -6,44 +6,10 @@
 *
 * Program maxSumSubarray.cpp reads a text file of space delimited ints and 
 * appends the Maximum Sum Subarray and sum of each line to a seperate text
-* file. Compile with: g++ maxSumSubarray.cpp -o maxSum -g -Wall
+* file. Compile with: g++ maxSumSubarray.cpp -o maxSum -g -Wall -std=c++11
 * Call from CLI: "maxSum 1" to show with execution times, "maxSum 0" otherwise.
 ******************************************************************************/
-#include <vector>
-#include <string>
-#include <fstream>
-#include <sstream>
-#include <iostream>
-using std::cout;
-#include <sys/stat.h>
-#include <ctime>
-#include <cstdlib>
-
-class Timer {
-	private:
-		timespec begin, end;
-	public:
-		Timer() {
-			clock_gettime(CLOCK_REALTIME, &begin);
-		}
-		double elapsed() {
-			clock_gettime(CLOCK_REALTIME, &end);
-			return end.tv_sec - begin.tv_sec + (end.tv_nsec - begin.tv_nsec);
-	}
-	void reset() {
-		clock_gettime(CLOCK_REALTIME, &begin);
-	}
-
-};
-
-
-// Prototypes.
-void maxSumSubArray_1(std::vector<std::vector<int> > allData, std::vector<std::vector<int> > &results, int showTime);
-void maxSumSubArray_2(std::vector<std::vector<int> > allData, std::vector<std::vector<int> > &results, int showTime);
-void maxSumSubArray_3();
-void maxSumSubArray_4();
-bool fileExists(std::string fileName);
-void append2file(std::vector<std::vector<int> > &results);
+#include "maxSumSubarray.hpp"
 
 int main(int argc, char** argv) {
 	if (argc != 2 || atoi(argv[1]) < 0 || atoi(argv[1]) > 1) {
@@ -86,7 +52,7 @@ int main(int argc, char** argv) {
 	// Find the maxSumSubarray and append to MSS_Results.txt. Vector results modified in place.
 	maxSumSubArray_1(allData, results, showTime);
 	maxSumSubArray_2(allData, results, showTime);
-	maxSumSubArray_3();
+//	maxSumSubArray_3(arr, 0, (n - 1));
 	maxSumSubArray_4();
 
 	return 0;
@@ -225,9 +191,35 @@ void maxSumSubArray_2(std::vector<std::vector<int> > allData, std::vector<std::v
 	append2file(results);
 }
 
+/***********************************************************************************
+*                         Algorithm 3: Divide and Conquer
+* This algorithm will split the array into halves recursively and recombine.
+* We know the maximum subarray will be in the first half, the second half, or made
+* from the end of the first half and the beginning of the second half.
+***********************************************************************************/
+int maxSumSubArray_3(int arr[], int start, int end) {
+	if (start == end)	// for tiny array of size 1
+		return arr[start];
+	else {			// anything bigger gets broken down
+		int mid = (start + end) / 2;
 
-void maxSumSubArray_3() {
+		int leftMax = maxSumSubArray_3(arr, start, mid);
+		int rightMax = maxSumSubArray_3(arr, mid + 1, end);
 
+		int suffix = MaxSuffix(arr, start, mid);
+		int prefix = MaxPrefix(arr, mid + 1, end);
+
+		// Return whichever has the highest value
+		if (leftMax >= rightMax && leftMax >= (suffix + prefix)) {
+			return leftMax;
+		}
+		else if (rightMax >= leftMax && rightMax >= (suffix + prefix)) {
+			return rightMax;
+		}
+		else {
+			return (suffix + prefix);
+		}
+	}
 }
 
 
@@ -254,20 +246,90 @@ void append2file(std::vector<std::vector<int> > &results) {
 	for (unsigned int i = 0; i < results.size(); i++) {
 		skipLines++;
 		for (unsigned int j = 0; j < results[i].size(); j++) {
-//			cout << results[i][j];
-			resultFile << results[i][j];
-//			cout << " ";
-			resultFile << " ";
+			cout << results[i][j];
+//			resultFile << results[i][j];
+			cout << " ";
+//			resultFile << " ";
 
 		}
-//		cout << '\n';
-		resultFile << '\n';
+		cout << '\n';
+//		resultFile << '\n';
 		if (skipLines % 3 == 0) {
-//			cout << '\n';
-			resultFile << '\n';
+			cout << '\n';
+//			resultFile << '\n';
 		}
 	}
 	resultFile.close();
+}
+
+
+/******************************************************************************
+* Helper functions for maxSumSubArray_3, which will compute maximum prefix and
+* suffixes and append maxSumSubArray found info to MSS_Results.txt
+******************************************************************************/
+
+// Finds the rightmost maximum sum
+int MaxSuffix(int arr[], int start, int end) {
+	int maxSum = arr[end];
+	int sum = 0;
+	for (int j = end; j >= start; j--) {
+		sum = sum + arr[j];
+		if (sum > maxSum)
+			maxSum = sum;
+	}
+	return maxSum;
+}
+
+// Finds the leftmost maximum sum
+int MaxPrefix(int arr[], int start, int end) {
+	int maxSum = arr[start];
+	int sum = 0;
+	for (int j = start; j <= end; j++) {
+		sum = sum + arr[j];
+		if (sum > maxSum)
+			maxSum = sum;
+	}
+	return maxSum;
+}
+
+
+// Print subarray "x" from arr[] given sum of "x".
+void showSubArraySum(int arr[], int n, int sum) {
+	// Create an empty map.
+	std::unordered_map<int, int> aMap;
+
+	// Our running sum.
+	int accumulator = 0;
+
+	for (int i = 0; i < n; i++) {
+		// Add current element to accumulator.
+		accumulator += arr[i];
+
+		/* If accumulator == sum, we've found our
+		subarray starting from arr[0] to arr[i] */
+		if (accumulator == sum) {
+			for (int j = 0; j <= i; i++) {
+				cout << arr[j];
+				cout << " ";
+			}
+			cout << '\n';
+			return;
+		}
+
+		// If accumulator - sum is in map already, we have our subarray!
+		if (aMap.find(accumulator - sum) != aMap.end()) {
+			for (int j = aMap[accumulator - sum] + 1; j <= i; j++) {
+				cout << arr[j];
+				cout << " ";
+			}
+			cout << '\n';
+			return;
+		}
+		aMap[accumulator] = i;
+	}
+
+	// If we reach here,
+	cout << "Subarray not found!\n";
 }
 
 
