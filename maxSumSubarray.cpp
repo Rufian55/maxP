@@ -52,7 +52,40 @@ int main(int argc, char** argv) {
 	// Find the maxSumSubarray and append to MSS_Results.txt. Vector results modified in place.
 	maxSumSubArray_1(allData, results, showTime);
 	maxSumSubArray_2(allData, results, showTime);
-//	maxSumSubArray_3(arr, 0, (n - 1));
+
+	/* Since function maxSumsubarray_3() is recursive and involves multiple return statements,
+	   we manually build results 2D vector here in main. Additionally, we time the call to 
+	   maxSumSubarray_3 from main, so the call and final return, considered constants, are
+	   included but considered negligible in comparison to the other maxSumSubArray functions.*/
+
+	int maxSum;
+ 	std::vector<int> mssTotal; // 1D int vector (of length 1) to capture the maxSumSubarray total.
+	results.clear();
+	for (unsigned int i = 0; i < allData.size(); i++) {
+		results.push_back(allData[i]);									// Add the input vector.
+		results.push_back(getSubArray(allData[i]));							// Add the derived vector.
+
+		Timer algoTime;
+		// TIME FROM HERE...
+		double start_ = algoTime.elapsed();
+
+		maxSum = maxSumSubArray_3(allData[i], 0, allData[i].size() - 1);			// Get the maxSum.
+
+		// ... TO HERE.
+		algoTime.reset();
+		double stop = algoTime.elapsed();
+		double execTime = ((start_ - stop) / (double)CLOCKS_PER_SEC);
+		if (showTime) {
+			cout << std::fixed << "Elapsed time for maxSumSubArray_3, lineNum: "
+				<< i + 1 << " = " << execTime << '\n';
+		}
+
+		mssTotal.clear();
+		mssTotal.push_back(maxSum);										// Add maxSum to mssTotal.
+		results.push_back(mssTotal);										// Add the maxSum vector.
+	}
+	append2file(results);
+
 	maxSumSubArray_4();
 
 	return 0;
@@ -98,10 +131,9 @@ void maxSumSubArray_1(std::vector<std::vector<int> > allData, std::vector<std::v
 		// ...TO HERE!
 		algoTime.reset();
 		double stop = algoTime.elapsed();
-		// execTime a global.
 		double execTime = ((start - stop) / (double)CLOCKS_PER_SEC);
 		if (showTime) {
-			cout << std::fixed << "Elapsed time for maxSumSubArray, lineNum: " << lineNum + 1 << " = " << execTime << '\n';
+			cout << std::fixed << "Elapsed time for maxSumSubArray_1, lineNum: " << lineNum + 1 << " = " << execTime << '\n';
 		}
 
 		// Push the allData[lineNum] onto results.
@@ -165,10 +197,9 @@ void maxSumSubArray_2(std::vector<std::vector<int> > allData, std::vector<std::v
 		// ...TO HERE!
 		algoTime.reset();
 		double stop = algoTime.elapsed();
-		// execTime a global.
 		double execTime = ((start - stop) / (double)CLOCKS_PER_SEC);
 		if (showTime) {
-			cout << std::fixed << "Elapsed time for maxSumSubArray, lineNum: " << lineNum + 1 << " = " << execTime << '\n';
+			cout << std::fixed << "Elapsed time for maxSumSubArray_2, lineNum: " << lineNum + 1 << " = " << execTime << '\n';
 		}
 
 		// Push the allData[lineNum] onto results.
@@ -197,10 +228,10 @@ void maxSumSubArray_2(std::vector<std::vector<int> > allData, std::vector<std::v
 * We know the maximum subarray will be in the first half, the second half, or made
 * from the end of the first half and the beginning of the second half.
 ***********************************************************************************/
-int maxSumSubArray_3(int arr[], int start, int end) {
-	if (start == end)	// for tiny array of size 1
+int maxSumSubArray_3(std::vector<int> arr, int start, int end) {
+	if (start == end)	// Base case n = 1
 		return arr[start];
-	else {			// anything bigger gets broken down
+	else {			// Anything bigger gets broken down.
 		int mid = (start + end) / 2;
 
 		int leftMax = maxSumSubArray_3(arr, start, mid);
@@ -209,7 +240,7 @@ int maxSumSubArray_3(int arr[], int start, int end) {
 		int suffix = MaxSuffix(arr, start, mid);
 		int prefix = MaxPrefix(arr, mid + 1, end);
 
-		// Return whichever has the highest value
+		// Return whichever has the highest value.
 		if (leftMax >= rightMax && leftMax >= (suffix + prefix)) {
 			return leftMax;
 		}
@@ -269,7 +300,7 @@ void append2file(std::vector<std::vector<int> > &results) {
 ******************************************************************************/
 
 // Finds the rightmost maximum sum
-int MaxSuffix(int arr[], int start, int end) {
+int MaxSuffix(std::vector<int> arr, int start, int end) {
 	int maxSum = arr[end];
 	int sum = 0;
 	for (int j = end; j >= start; j--) {
@@ -281,7 +312,7 @@ int MaxSuffix(int arr[], int start, int end) {
 }
 
 // Finds the leftmost maximum sum
-int MaxPrefix(int arr[], int start, int end) {
+int MaxPrefix(std::vector<int> arr, int start, int end) {
 	int maxSum = arr[start];
 	int sum = 0;
 	for (int j = start; j <= end; j++) {
@@ -293,43 +324,32 @@ int MaxPrefix(int arr[], int start, int end) {
 }
 
 
-// Print subarray "x" from arr[] given sum of "x".
-void showSubArraySum(int arr[], int n, int sum) {
-	// Create an empty map.
-	std::unordered_map<int, int> aMap;
-
-	// Our running sum.
-	int accumulator = 0;
-
+// Returns subarray "x" from vector input given sum of "x".
+std::vector<int> getSubArray(std::vector<int> arr) {
+	int n = arr.size();			// Get size of input vector.
+	std::vector<int> subArray;	// Create vector to be returned.
+	int max2date = INT_MIN;
+	int maxEnd = 0;
+	int start = 0;
+	int end = 0;
+	int temp = 0;
+	// O(n).
 	for (int i = 0; i < n; i++) {
-		// Add current element to accumulator.
-		accumulator += arr[i];
-
-		/* If accumulator == sum, we've found our
-		subarray starting from arr[0] to arr[i] */
-		if (accumulator == sum) {
-			for (int j = 0; j <= i; i++) {
-				cout << arr[j];
-				cout << " ";
-			}
-			cout << '\n';
-			return;
+		maxEnd += arr[i];
+		if (max2date < maxEnd) {
+			max2date = maxEnd;
+			start = temp;
+			end = i;
 		}
-
-		// If accumulator - sum is in map already, we have our subarray!
-		if (aMap.find(accumulator - sum) != aMap.end()) {
-			for (int j = aMap[accumulator - sum] + 1; j <= i; j++) {
-				cout << arr[j];
-				cout << " ";
-			}
-			cout << '\n';
-			return;
+		if (maxEnd < 0) {
+			maxEnd = 0;
+			temp = i + 1;
 		}
-		aMap[accumulator] = i;
 	}
-
-	// If we reach here,
-	cout << "Subarray not found!\n";
+	for (int i = start; i <= end; i++) {
+		subArray.push_back(arr[i]);
+	}
+	return subArray;
 }
 
 
