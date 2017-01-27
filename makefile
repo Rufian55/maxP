@@ -53,7 +53,7 @@ PROGS = ${PROG1}
 # In this case, default.
 
 default:
-	${CXX} ${SRCS} ${HEADERS} -o ${PROG1}
+	${CXX} ${CXXFLAGS} ${SRCS} ${HEADERS} -o ${PROG1}
 
 # Typing 'make all' in terminal calls this build.
 all:
