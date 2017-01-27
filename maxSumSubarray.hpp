@@ -22,6 +22,8 @@ using std::cout;
 #include <climits>
 #include <limits>
 
+#define OK_2_DISPLAY_2_STDOUT 0
+
 // Prototypes.
 void maxSumSubArray_1(std::vector<std::vector<int> > allData, std::vector<std::vector<int> > &results, int showTime);
 void maxSumSubArray_2(std::vector<std::vector<int> > allData, std::vector<std::vector<int> > &results, int showTime);

@@ -26,7 +26,7 @@ SRC1 = maxSumSubarray.cpp
 #SRC5 = 
 #SRC6 = 
 #SRC7 = 
-# SRC8 = 
+#SRC8 = 
 SRCS = ${SRC1}
 
 # HEADERS is a standard name for the header files (.hpp). 

@@ -72,7 +72,7 @@ int main(int argc, char** argv) {
 		results.push_back(getSubArray(allData[i]));							// Add the derived vector.
 
 		// TIME FROM HERE...
-		auto start = std::chrono::high_resolution_clock::now();
+		auto start = std::chrono::high_resolution_clock::now();				// [1]
 
 		maxSum = maxSumSubArray_3(allData[i], 0, allData[i].size() - 1);			// Get the maxSum.
 
@@ -98,7 +98,7 @@ int main(int argc, char** argv) {
 
 
 /* Determine max sum of subarray with brute force method. All posible combinations
-   of subarrays checked. O(n^3) [1] */
+   of subarrays checked. O(n^3) [2] */
 void maxSumSubArray_1(std::vector<std::vector<int> > allData, std::vector<std::vector<int> > &results, int showTime) {
 	// 1D int vector to capture the maxSumSubarray elements.
 	std::vector<int> resultsData;
@@ -136,7 +136,8 @@ void maxSumSubArray_1(std::vector<std::vector<int> > allData, std::vector<std::v
 		std::chrono::duration<double> execTime = end - start;
 
 		if (showTime) {
-			cout << std::fixed << "Elapsed time for maxSumSubArray_1, lineNum: " << lineNum + 1 << " = " << execTime.count() << '\n';
+			cout << std::fixed << "Elapsed time for maxSumSubArray_1, lineNum: " 
+				<< lineNum + 1 << " = " << execTime.count() << '\n';
 		}
 
 		// Push the allData[lineNum] onto results.
@@ -160,7 +161,7 @@ void maxSumSubArray_1(std::vector<std::vector<int> > allData, std::vector<std::v
 
 
 /* Determine max sum of subarray with brute force method. Keeps track of largest
-	subarray checked during iteration. O(n^2) [1] */
+	subarray checked during iteration. O(n^2) [3] */
 void maxSumSubArray_2(std::vector<std::vector<int> > allData, std::vector<std::vector<int> > &results, int showTime) {
 	// 1D int vector to capture the maxSumSubarray elements.
 	std::vector<int> resultsData;
@@ -201,7 +202,8 @@ void maxSumSubArray_2(std::vector<std::vector<int> > allData, std::vector<std::v
 		std::chrono::duration<double> execTime = end - start;
 
 		if (showTime) {
-			cout << std::fixed << "Elapsed time for maxSumSubArray_2, lineNum: " << lineNum + 1 << " = " << execTime.count() << '\n';
+			cout << std::fixed << "Elapsed time for maxSumSubArray_2, lineNum: " 
+				<< lineNum + 1 << " = " << execTime.count() << '\n';
 		}
 
 		// Push the allData[lineNum] onto results.
@@ -266,7 +268,7 @@ void maxSumSubArray_4(std::vector<std::vector<int> > allData, std::vector<std::v
 	// Process the 2D vector allData.
 	for (unsigned int lineNum = 0; lineNum < allData.size(); lineNum++) {
 		long long int currentSum = 0;
-		long long int maxSum = std::numeric_limits<int>::min();  //Initially set MaxSum to the lowest possible integer.
+		long long int maxSum = std::numeric_limits<int>::min();  //Initially set MaxSum to lowest possible integer.
 		long long int currentArrayStart = 0;
 		long long int maxStart = 0; //Beginning index of the max subarray
 		long long int maxEnd = 0; //Ending index of the max subarray
@@ -294,7 +296,8 @@ void maxSumSubArray_4(std::vector<std::vector<int> > allData, std::vector<std::v
 		std::chrono::duration<double> execTime = end - start;
 
 		if (showTime) {
-			cout << std::fixed << "Elapsed time for maxSumSubArray_4, lineNum: " << lineNum + 1 << " = " << execTime.count() << '\n';
+			cout << std::fixed << "Elapsed time for maxSumSubArray_4, lineNum: " 
+				<< lineNum + 1 << " = " << execTime.count() << '\n';
 		}
 
 		// Push the allData[lineNum] onto results.
@@ -319,7 +322,7 @@ void maxSumSubArray_4(std::vector<std::vector<int> > allData, std::vector<std::v
 }
 
 
-// Uses stat() to check for file existence. [2]
+// Uses stat() to check for file existence. [4]
 bool fileExists(std::string fileName) {
 	struct stat buffer;
 	return (stat(fileName.c_str(), &buffer) == 0);
@@ -329,7 +332,7 @@ bool fileExists(std::string fileName) {
 // Appends results data to text file. //cout's are for testing.
 void append2file(std::vector<std::vector<int> > &results) {
 
-	// Open the results file for appending.	[3]
+	// Open the results file for appending.	[5]
 	std::ofstream resultFile("MSS_Results.txt", std::ios_base::app);
 
 	int skipLines = 0;
@@ -337,17 +340,30 @@ void append2file(std::vector<std::vector<int> > &results) {
 	for (unsigned int i = 0; i < results.size(); i++) {
 		skipLines++;
 		for (unsigned int j = 0; j < results[i].size(); j++) {
-//			cout << results[i][j];
-			resultFile << results[i][j];
-//			cout << " ";
-			resultFile << " ";
-
+			if(OK_2_DISPLAY_2_STDOUT){
+				cout << results[i][j];
+				cout << " ";
+			}
+			else {
+				resultFile << results[i][j];
+				resultFile << " ";
+			}
 		}
-//		cout << '\n';
-		resultFile << '\n';
-		if (skipLines % 3 == 0) {
-//			cout << '\n';
+
+		if (OK_2_DISPLAY_2_STDOUT) {
+			cout << '\n';
+		}
+		else {
 			resultFile << '\n';
+		}
+
+		if (skipLines % 3 == 0) {
+			if (OK_2_DISPLAY_2_STDOUT) {
+				cout << '\n';
+			}
+			else {
+				resultFile << '\n';
+			}
 		}
 	}
 	resultFile.close();
@@ -414,10 +430,9 @@ std::vector<int> getSubArray(std::vector<int> arr) {
 
 
 /* CITATIONS: Code adapted from the following sources:
-[1] http://cpluspluscode.blogspot.com/2012/11/maximum-subarray-problem.html
-[ ] https://github.com/julycoding/The-Art-Of-Programming-By-July/blob/master/ebook/en/07.0.md
-[2] http://stackoverflow.com/questions/12774207/fastest-way-to-check-if-a-file-exist-using-standard-c-c11-c
-[3] http://stackoverflow.com/questions/26084885/appending-to-a-file-with-ofstream
-[4] https://gist.github.com/gongzhitaao/7062087 
-[5] http://en.cppreference.com/w/cpp/chrono/high_resolution_clock/now
+[1] http://en.cppreference.com/w/cpp/chrono/high_resolution_clock/now
+[2] https://github.com/julycoding/The-Art-Of-Programming-By-July/blob/master/ebook/en/07.0.md
+[3] http://cpluspluscode.blogspot.com/2012/11/maximum-subarray-problem.html
+[4] http://stackoverflow.com/questions/12774207/fastest-way-to-check-if-a-file-exist-using-standard-c-c11-c
+[5] http://stackoverflow.com/questions/26084885/appending-to-a-file-with-ofstream
 */
