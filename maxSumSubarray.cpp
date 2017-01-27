@@ -12,18 +12,24 @@
 #include "maxSumSubarray.hpp"
 
 int main(int argc, char** argv) {
-	if (argc != 2 || atoi(argv[1]) < 0 || atoi(argv[1]) > 1) {
-		cout << "Usage: \"maxSum 1\" or \"maxSum 0\"\n" <<
-			"0 for do not show execution times, 1 otherwise.\n";
+	if (argc < 2 || argc > 3 || atoi(argv[1]) < 0 || atoi(argv[1]) > 1) {
+		cout << "Usage: \"maxSum 1 [input_file_name]\" or \"maxSum 0 [input_file_name]\"\n" <<
+			"0 for do not show execution times, 1 to show the exection times.\n" <<
+			"The input_file_name is optional, default is \"MSS_Problems.txt\"\n";
 		exit(1);
 	}
 
 	int showTime = atoi(argv[1]);
 
+	std::string theInputFile = "MSS_Problems.txt";
+	if (argc == 3) {
+		theInputFile = argv[2];
+	}
+
+	std::ifstream inputFile(theInputFile);
+
 	std::vector<std::vector<int> > allData;	// 2D input vector.
 	std::vector<std::vector<int> > results;	// 2d results vector.
-
-	std::ifstream inputFile("MSS_TestProblems.txt");
 	std::string eachLine;
 	int eachInt;
 
@@ -93,7 +99,7 @@ int main(int argc, char** argv) {
 
 
 /* Determine max sum of subarray with brute force method. All posible combinations
-   of subarrays checked. O(n^3) [3] */
+   of subarrays checked. O(n^3) [1] */
 void maxSumSubArray_1(std::vector<std::vector<int> > allData, std::vector<std::vector<int> > &results, int showTime) {
 	// 1D int vector to capture the maxSumSubarray elements.
 	std::vector<int> resultsData;
@@ -159,7 +165,7 @@ void maxSumSubArray_1(std::vector<std::vector<int> > allData, std::vector<std::v
 
 
 /* Determine max sum of subarray with brute force method. Keeps track of largest
-	subarray checked during iteration. O(n^2) [3] */
+	subarray checked during iteration. O(n^2) [1] */
 void maxSumSubArray_2(std::vector<std::vector<int> > allData, std::vector<std::vector<int> > &results, int showTime) {
 	// 1D int vector to capture the maxSumSubarray elements.
 	std::vector<int> resultsData;
@@ -224,12 +230,10 @@ void maxSumSubArray_2(std::vector<std::vector<int> > allData, std::vector<std::v
 	append2file(results);
 }
 
-/***********************************************************************************
-*                         Algorithm 3: Divide and Conquer
-* This algorithm will split the array into halves recursively and recombine.
-* We know the maximum subarray will be in the first half, the second half, or made
-* from the end of the first half and the beginning of the second half. O(nlogn)
-***********************************************************************************/
+/* Algorithm 3: Divide and Conquer
+*  This algorithm will split the array into halves recursively and recombine.
+*  We know the maximum subarray will be in the first half, the second half, or made
+*  from the end of the first half and the beginning of the second half. O(nlogn).*/
 int maxSumSubArray_3(std::vector<int> arr, int start, int end) {
 	if (start == end)	// Base case n = 1
 		return arr[start];
@@ -320,7 +324,7 @@ void maxSumSubArray_4(std::vector<std::vector<int> > allData, std::vector<std::v
 }
 
 
-// Uses stat() to check for file existence. [1]
+// Uses stat() to check for file existence. [2]
 bool fileExists(std::string fileName) {
 	struct stat buffer;
 	return (stat(fileName.c_str(), &buffer) == 0);
@@ -330,7 +334,7 @@ bool fileExists(std::string fileName) {
 // Appends results data to text file. 
 void append2file(std::vector<std::vector<int> > &results) {
 
-	// Open the results file for appending.	[2]
+	// Open the results file for appending.	[3]
 	std::ofstream resultFile("MSS_Results.txt", std::ios_base::app);
 
 	int skipLines = 0;
@@ -415,7 +419,8 @@ std::vector<int> getSubArray(std::vector<int> arr) {
 
 
 /* CITATIONS: Code adapted from the following sources:
-[1] http://stackoverflow.com/questions/12774207/fastest-way-to-check-if-a-file-exist-using-standard-c-c11-c
-[2] http://stackoverflow.com/questions/26084885/appending-to-a-file-with-ofstream
-[3] http://cpluspluscode.blogspot.com/2012/11/maximum-subarray-problem.html
+[1] http://cpluspluscode.blogspot.com/2012/11/maximum-subarray-problem.html
+[2] http://stackoverflow.com/questions/12774207/fastest-way-to-check-if-a-file-exist-using-standard-c-c11-c
+[3] http://stackoverflow.com/questions/26084885/appending-to-a-file-with-ofstream
+[4] https://gist.github.com/gongzhitaao/7062087 
 */
