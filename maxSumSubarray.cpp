@@ -387,15 +387,15 @@ long long int MaxPrefix(std::vector<int> arr, long long int start, long long int
 
 // Returns subArray "?" from input vector arr.
 std::vector<int> getSubArray(std::vector<int> arr) {
-	int n = arr.size();			// Get size of input vector.
+	long long int n = arr.size();	// Get size of input vector.
 	std::vector<int> subArray;	// Create vector to be returned.
-	int max2date = INT_MIN;
-	int maxEnd = 0;
-	int start = 0;
-	int end = 0;
-	int temp = 0;
+	long long int max2date = INT_MIN;
+	long long int maxEnd = 0;
+	long long int start = 0;
+	long long int end = 0;
+	long long int temp = 0;
 	// O(n).
-	for (int i = 0; i < n; i++) {
+	for (long long int i = 0; i < n; i++) {
 		maxEnd += arr[i];
 		if (max2date < maxEnd) {
 			max2date = maxEnd;
@@ -407,7 +407,7 @@ std::vector<int> getSubArray(std::vector<int> arr) {
 			temp = i + 1;
 		}
 	}
-	for (int i = start; i <= end; i++) {
+	for (long long int i = start; i <= end; i++) {
 		subArray.push_back(arr[i]);
 	}
 	return subArray;
