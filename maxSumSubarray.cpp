@@ -114,21 +114,19 @@ void maxSumSubArray_1(std::vector<std::vector<int> > allData, std::vector<std::v
 		// TIME FROM HERE...
 		auto start = std::chrono::high_resolution_clock::now();
 
-		long long int maxSum = allData[lineNum][0];
-		long long int maxSumBegin = 0, maxSumEnd = 0;
+		int max = INT_MIN;
+		int sum = 0;
+		int n = allData[lineNum].size();
 
-		// The brute force algorithm.
-		for (unsigned int i = 1; i < allData[lineNum].size(); i++) {
-			long long int temp = 0;
-			long long int j = i;
-			while (j >= 0) {
-				temp += allData[lineNum][j];
-				if (temp > maxSum) {
-					maxSum = temp;
-					maxSumBegin = j;
-					maxSumEnd = i;
+		// Brute force n^3 [ ]
+		for (int i = 0; i < n; i++) {
+			for (int j = i; j < n; j++) {
+				for (int k = i; k <= j; k++) {
+					sum += allData[lineNum][k];
 				}
-				j--;
+				if (sum > max)
+					max = sum;
+				sum = 0; // Reset to 0 or sums all subarrays.
 			}
 		}
 
@@ -146,16 +144,15 @@ void maxSumSubArray_1(std::vector<std::vector<int> > allData, std::vector<std::v
 
 		// Push allData[lineNum][i] from index maxSumStart to maxSumEnd onto resultsData.
 		resultsData.clear();
-		for (long long int i = maxSumBegin; i <= maxSumEnd; i++) {
-			resultsData.push_back(allData[lineNum][i]);
-		}
+
+		resultsData = getSubArray(allData[lineNum]);
 
 		// Push resultsData onto results.
 		results.push_back(resultsData);
 
 		// Push maxSum onto results[++i]
 		mssTotal.clear();
-		mssTotal.push_back(maxSum);
+		mssTotal.push_back(max);
 		results.push_back(mssTotal);
 	}
 	append2file(results);
@@ -182,7 +179,7 @@ void maxSumSubArray_2(std::vector<std::vector<int> > allData, std::vector<std::v
 		long long int maxSum = allData[lineNum][0];
 		long long int maxSumBegin = 0, maxSumEnd = 0;
 
-		// The enhanced brute force algorithm.
+		// The enhanced brute force algorithm O(n^2).
 		for (unsigned int i = 1; i < allData[lineNum].size(); i++) {
 			long long int temp = 0;
 			int j = i;
@@ -212,6 +209,7 @@ void maxSumSubArray_2(std::vector<std::vector<int> > allData, std::vector<std::v
 
 		// Push allData[lineNum][i] from index maxSumStart to maxSumEnd onto resultsData.
 		resultsData.clear();
+
 		for (long long int i = maxSumBegin; i <= maxSumEnd; i++) {
 			resultsData.push_back(allData[lineNum][i]);
 		}
@@ -304,6 +302,7 @@ void maxSumSubArray_4(std::vector<std::vector<int> > allData, std::vector<std::v
 
 		// Push allData[lineNum][i] from index maxSumStart to maxSumEnd onto resultsData.
 		resultsData.clear();
+
 		for (long long int i = maxStart; i <= maxEnd; i++) {
 			resultsData.push_back(allData[lineNum][i]);
 		}
@@ -416,6 +415,7 @@ std::vector<int> getSubArray(std::vector<int> arr) {
 
 /* CITATIONS: Code adapted from the following sources:
 [1] http://cpluspluscode.blogspot.com/2012/11/maximum-subarray-problem.html
+[ ] https://github.com/julycoding/The-Art-Of-Programming-By-July/blob/master/ebook/en/07.0.md
 [2] http://stackoverflow.com/questions/12774207/fastest-way-to-check-if-a-file-exist-using-standard-c-c11-c
 [3] http://stackoverflow.com/questions/26084885/appending-to-a-file-with-ofstream
 [4] https://gist.github.com/gongzhitaao/7062087 
