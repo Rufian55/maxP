@@ -64,26 +64,25 @@ int main(int argc, char** argv) {
 	   maxSumSubarray_3 from main, so the call and final return, considered constants, are
 	   included but considered negligible when comparing to the other maxSumSubArray functions.*/
 
-	int maxSum;
+	long long int maxSum;
  	std::vector<int> mssTotal; // 1D int vector (of length 1) to capture the maxSumSubarray total.
 	results.clear();
 	for (unsigned int i = 0; i < allData.size(); i++) {
 		results.push_back(allData[i]);									// Add the input vector.
 		results.push_back(getSubArray(allData[i]));							// Add the derived vector.
 
-		Timer algoTime;
 		// TIME FROM HERE...
-		double start_ = algoTime.elapsed();
+		auto start = std::chrono::high_resolution_clock::now();
 
 		maxSum = maxSumSubArray_3(allData[i], 0, allData[i].size() - 1);			// Get the maxSum.
 
-		// ... TO HERE.
-		algoTime.reset();
-		double stop = algoTime.elapsed();
-		double execTime = ((start_ - stop) / (double)CLOCKS_PER_SEC);
+		auto end = std::chrono::high_resolution_clock::now();
+		// ... TO HERE (line above).
+		std::chrono::duration<double> execTime = end - start;
+
 		if (showTime) {
 			cout << std::fixed << "Elapsed time for maxSumSubArray_3, lineNum: "
-				<< i + 1 << " = " << execTime << '\n';
+				<< i + 1 << " = " << execTime.count() << '\n';
 		}
 
 		mssTotal.clear();
@@ -110,20 +109,18 @@ void maxSumSubArray_1(std::vector<std::vector<int> > allData, std::vector<std::v
 	// Clear 2D results vector (passed by ref, so old 1D vectors still hanging around).
 	results.clear();
 
-	Timer algoTime;
-
 	// Process allData vector.
 	for (unsigned int lineNum = 0; lineNum < allData.size(); lineNum++) {
 		// TIME FROM HERE...
-		double start = algoTime.elapsed();
+		auto start = std::chrono::high_resolution_clock::now();
 
-		int maxSum = allData[lineNum][0];
-		unsigned int maxSumBegin = 0, maxSumEnd = 0;
+		long long int maxSum = allData[lineNum][0];
+		long long int maxSumBegin = 0, maxSumEnd = 0;
 
 		// The brute force algorithm.
 		for (unsigned int i = 1; i < allData[lineNum].size(); i++) {
-			int temp = 0;
-			int j = i;
+			long long int temp = 0;
+			long long int j = i;
 			while (j >= 0) {
 				temp += allData[lineNum][j];
 				if (temp > maxSum) {
@@ -135,12 +132,13 @@ void maxSumSubArray_1(std::vector<std::vector<int> > allData, std::vector<std::v
 			}
 		}
 
-		// ...TO HERE!
-		algoTime.reset();
-		double stop = algoTime.elapsed();
-		double execTime = ((start - stop) / (double)CLOCKS_PER_SEC);
+		auto end = std::chrono::high_resolution_clock::now();
+		// ... TO HERE (line above).
+
+		std::chrono::duration<double> execTime = end - start;
+
 		if (showTime) {
-			cout << std::fixed << "Elapsed time for maxSumSubArray_1, lineNum: " << lineNum + 1 << " = " << execTime << '\n';
+			cout << std::fixed << "Elapsed time for maxSumSubArray_1, lineNum: " << lineNum + 1 << " = " << execTime.count() << '\n';
 		}
 
 		// Push the allData[lineNum] onto results.
@@ -148,7 +146,7 @@ void maxSumSubArray_1(std::vector<std::vector<int> > allData, std::vector<std::v
 
 		// Push allData[lineNum][i] from index maxSumStart to maxSumEnd onto resultsData.
 		resultsData.clear();
-		for (unsigned int i = maxSumBegin; i <= maxSumEnd; i++) {
+		for (long long int i = maxSumBegin; i <= maxSumEnd; i++) {
 			resultsData.push_back(allData[lineNum][i]);
 		}
 
@@ -176,21 +174,19 @@ void maxSumSubArray_2(std::vector<std::vector<int> > allData, std::vector<std::v
 	// Clear 2D results vector (passed by ref, so old 1D vectors still hanging around).
 	results.clear();
 
-	Timer algoTime;
-
 	// Process allData vector.
 	for (unsigned int lineNum = 0; lineNum < allData.size(); lineNum++) {
 		// TIME FROM HERE...
-		double start = algoTime.elapsed();
+		auto start = std::chrono::high_resolution_clock::now();
 
-		int maxSum = allData[lineNum][0];
-		unsigned int maxSumBegin = 0, maxSumEnd = 0;
+		long long int maxSum = allData[lineNum][0];
+		long long int maxSumBegin = 0, maxSumEnd = 0;
 
 		// The enhanced brute force algorithm.
 		for (unsigned int i = 1; i < allData[lineNum].size(); i++) {
-			int temp = 0;
+			long long int temp = 0;
 			int j = i;
-			int start = maxSumBegin;
+			long long int start = maxSumBegin;
 			while (j >= start) {
 				temp += allData[lineNum][j];
 				if (temp > maxSum) {
@@ -202,12 +198,13 @@ void maxSumSubArray_2(std::vector<std::vector<int> > allData, std::vector<std::v
 			}
 		}
 
-		// ...TO HERE!
-		algoTime.reset();
-		double stop = algoTime.elapsed();
-		double execTime = ((start - stop) / (double)CLOCKS_PER_SEC);
+		auto end = std::chrono::high_resolution_clock::now();
+		// ... TO HERE (line above).
+
+		std::chrono::duration<double> execTime = end - start;
+
 		if (showTime) {
-			cout << std::fixed << "Elapsed time for maxSumSubArray_2, lineNum: " << lineNum + 1 << " = " << execTime << '\n';
+			cout << std::fixed << "Elapsed time for maxSumSubArray_2, lineNum: " << lineNum + 1 << " = " << execTime.count() << '\n';
 		}
 
 		// Push the allData[lineNum] onto results.
@@ -215,7 +212,7 @@ void maxSumSubArray_2(std::vector<std::vector<int> > allData, std::vector<std::v
 
 		// Push allData[lineNum][i] from index maxSumStart to maxSumEnd onto resultsData.
 		resultsData.clear();
-		for (unsigned int i = maxSumBegin; i <= maxSumEnd; i++) {
+		for (long long int i = maxSumBegin; i <= maxSumEnd; i++) {
 			resultsData.push_back(allData[lineNum][i]);
 		}
 
@@ -234,17 +231,17 @@ void maxSumSubArray_2(std::vector<std::vector<int> > allData, std::vector<std::v
 *  This algorithm will split the array into halves recursively and recombine.
 *  We know the maximum subarray will be in the first half, the second half, or made
 *  from the end of the first half and the beginning of the second half. O(nlogn).*/
-int maxSumSubArray_3(std::vector<int> arr, int start, int end) {
+long long int maxSumSubArray_3(std::vector<int> arr, int start, int end) {
 	if (start == end)	// Base case n = 1
 		return arr[start];
 	else {			// Anything bigger gets broken down.
-		int mid = (start + end) / 2;
+		long long int mid = (start + end) / 2;
 
-		int leftMax = maxSumSubArray_3(arr, start, mid);
-		int rightMax = maxSumSubArray_3(arr, mid + 1, end);
+		long long int leftMax = maxSumSubArray_3(arr, start, mid);
+		long long int rightMax = maxSumSubArray_3(arr, mid + 1, end);
 
-		int suffix = MaxSuffix(arr, start, mid);
-		int prefix = MaxPrefix(arr, mid + 1, end);
+		long long int suffix = MaxSuffix(arr, start, mid);
+		long long int prefix = MaxPrefix(arr, mid + 1, end);
 
 		// Return whichever has the highest value.
 		if (leftMax >= rightMax && leftMax >= (suffix + prefix)) {
@@ -268,18 +265,16 @@ void maxSumSubArray_4(std::vector<std::vector<int> > allData, std::vector<std::v
 	// Clear 2D results vector (passed by ref, so old 1D vectors still hanging around).
 	results.clear();
 
-	Timer algoTime;
-
 	// Process the 2D vector allData.
 	for (unsigned int lineNum = 0; lineNum < allData.size(); lineNum++) {
-		int currentSum = 0;
-		int maxSum = std::numeric_limits<int>::min();  //Initially set MaxSum to the lowest possible integer.
-		int currentArrayStart = 0;
-		int maxStart = 0; //Beginning index of the max subarray
-		int maxEnd = 0; //Ending index of the max subarray
+		long long int currentSum = 0;
+		long long int maxSum = std::numeric_limits<int>::min();  //Initially set MaxSum to the lowest possible integer.
+		long long int currentArrayStart = 0;
+		long long int maxStart = 0; //Beginning index of the max subarray
+		long long int maxEnd = 0; //Ending index of the max subarray
 
 		// TIME FROM HERE...
-		double start_ = algoTime.elapsed();
+		auto start = std::chrono::high_resolution_clock::now();
 
 		/* Determine max sum. O(n) */
 		for (unsigned int i = 0; i < allData[lineNum].size(); i++) {
@@ -295,12 +290,13 @@ void maxSumSubArray_4(std::vector<std::vector<int> > allData, std::vector<std::v
 			}
 		}
 
-		// ...TO HERE!
-		algoTime.reset();
-		double stop = algoTime.elapsed();
-		double execTime = ((start_ - stop) / (double)CLOCKS_PER_SEC);
+		auto end = std::chrono::high_resolution_clock::now();
+		// ... TO HERE (line above).
+
+		std::chrono::duration<double> execTime = end - start;
+
 		if (showTime) {
-			cout << std::fixed << "Elapsed time for maxSumSubArray_4, lineNum: " << lineNum + 1 << " = " << execTime << '\n';
+			cout << std::fixed << "Elapsed time for maxSumSubArray_4, lineNum: " << lineNum + 1 << " = " << execTime.count() << '\n';
 		}
 
 		// Push the allData[lineNum] onto results.
@@ -308,7 +304,7 @@ void maxSumSubArray_4(std::vector<std::vector<int> > allData, std::vector<std::v
 
 		// Push allData[lineNum][i] from index maxSumStart to maxSumEnd onto resultsData.
 		resultsData.clear();
-		for (int i = maxStart; i <= maxEnd; i++) {
+		for (long long int i = maxStart; i <= maxEnd; i++) {
 			resultsData.push_back(allData[lineNum][i]);
 		}
 
@@ -331,7 +327,7 @@ bool fileExists(std::string fileName) {
 }
 
 
-// Appends results data to text file. 
+// Appends results data to text file. //cout's are for testing.
 void append2file(std::vector<std::vector<int> > &results) {
 
 	// Open the results file for appending.	[3]
@@ -342,17 +338,17 @@ void append2file(std::vector<std::vector<int> > &results) {
 	for (unsigned int i = 0; i < results.size(); i++) {
 		skipLines++;
 		for (unsigned int j = 0; j < results[i].size(); j++) {
-			cout << results[i][j];
-//			resultFile << results[i][j];
-			cout << " ";
-//			resultFile << " ";
+//			cout << results[i][j];
+			resultFile << results[i][j];
+//			cout << " ";
+			resultFile << " ";
 
 		}
-		cout << '\n';
-//		resultFile << '\n';
+//		cout << '\n';
+		resultFile << '\n';
 		if (skipLines % 3 == 0) {
-			cout << '\n';
-//			resultFile << '\n';
+//			cout << '\n';
+			resultFile << '\n';
 		}
 	}
 	resultFile.close();
@@ -365,10 +361,10 @@ void append2file(std::vector<std::vector<int> > &results) {
 ******************************************************************************/
 
 // Finds the rightmost maximum sum
-int MaxSuffix(std::vector<int> arr, int start, int end) {
-	int maxSum = arr[end];
-	int sum = 0;
-	for (int j = end; j >= start; j--) {
+long long int MaxSuffix(std::vector<int> arr, long long int start, long long int end) {
+	long long int maxSum = arr[end];
+	long long int sum = 0;
+	for (long long int j = end; j >= start; j--) {
 		sum = sum + arr[j];
 		if (sum > maxSum)
 			maxSum = sum;
@@ -377,10 +373,10 @@ int MaxSuffix(std::vector<int> arr, int start, int end) {
 }
 
 // Finds the leftmost maximum sum
-int MaxPrefix(std::vector<int> arr, int start, int end) {
-	int maxSum = arr[start];
-	int sum = 0;
-	for (int j = start; j <= end; j++) {
+long long int MaxPrefix(std::vector<int> arr, long long int start, long long int end) {
+	long long int maxSum = arr[start];
+	long long int sum = 0;
+	for (long long int j = start; j <= end; j++) {
 		sum = sum + arr[j];
 		if (sum > maxSum)
 			maxSum = sum;
@@ -423,4 +419,5 @@ std::vector<int> getSubArray(std::vector<int> arr) {
 [2] http://stackoverflow.com/questions/12774207/fastest-way-to-check-if-a-file-exist-using-standard-c-c11-c
 [3] http://stackoverflow.com/questions/26084885/appending-to-a-file-with-ofstream
 [4] https://gist.github.com/gongzhitaao/7062087 
+[5] http://en.cppreference.com/w/cpp/chrono/high_resolution_clock/now
 */

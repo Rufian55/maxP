@@ -16,37 +16,19 @@
 using std::cout;
 #include <sys/stat.h>
 #include <ctime>
+#include <chrono>
 #include <cstdlib>
 #include <unordered_map>
 #include <climits>
 #include <limits>
 
-class Timer {
-private:
-	timespec begin, end;
-public:
-	Timer() {
-		clock_gettime(CLOCK_REALTIME, &begin);
-	}
-	double elapsed() {
-		clock_gettime(CLOCK_REALTIME, &end);
-		return end.tv_sec - begin.tv_sec + (end.tv_nsec - begin.tv_nsec) * 100;
-	}
-	void reset() {
-		clock_gettime(CLOCK_REALTIME, &begin);
-	}
-
-};
-
-
 // Prototypes.
 void maxSumSubArray_1(std::vector<std::vector<int> > allData, std::vector<std::vector<int> > &results, int showTime);
 void maxSumSubArray_2(std::vector<std::vector<int> > allData, std::vector<std::vector<int> > &results, int showTime);
-int maxSumSubArray_3(std::vector<int> input, int start, int end);
+long long int maxSumSubArray_3(std::vector<int> input, int start, int end);
 std::vector<int> getSubArray(std::vector<int> input);
 void maxSumSubArray_4(std::vector<std::vector<int> > allData, std::vector<std::vector<int> > &results, int showTime);
 bool fileExists(std::string fileName);
 void append2file(std::vector<std::vector<int> > &results);
-int MaxSuffix(std::vector<int> arr, int start, int end);
-int MaxPrefix(std::vector<int> arr, int start, int end);
-
+long long int MaxSuffix(std::vector<int> arr, long long int start, long long int end);
+long long int MaxPrefix(std::vector<int> arr, long long int start, long long int end);
