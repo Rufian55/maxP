@@ -28,6 +28,6 @@ Instructions for program maxSub.
 				data as we submitted in the zip file.
 
 5. randArr.cpp is not compiled with the provided makefile.  randArr.cpp is provided
-   for Grader inspection only, but can be compiled with "gcc randArr.cpp -o ranGen"
+   for Grader inspection only, but can be compiled with "g++ randArr.cpp -o ranGen"
 
 * The zip file was created using WinRar.
