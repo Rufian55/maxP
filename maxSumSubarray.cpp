@@ -177,22 +177,14 @@ void maxSumSubArray_2(std::vector<std::vector<int> > allData, std::vector<std::v
 		// TIME FROM HERE...
 		auto start = std::chrono::high_resolution_clock::now();
 
-		long long int maxSum = allData[lineNum][0];
-		long long int maxSumBegin = 0, maxSumEnd = 0;
+		long long int maxSum = 0;
 
-		// The enhanced brute force algorithm O(n^2).
-		for (unsigned int i = 1; i < allData[lineNum].size(); i++) {
-			long long int temp = 0;
-			int j = i;
-			long long int start = maxSumBegin;
-			while (j >= start) {
-				temp += allData[lineNum][j];
-				if (temp > maxSum) {
-					maxSum = temp;
-					maxSumBegin = j;
-					maxSumEnd = i;
-				}
-				j--;
+		for (unsigned long long int i = 0; i < allData[lineNum].size(); i++) {
+			long long int tempSum = 0;
+			for (unsigned long long int j = i; j < allData[lineNum].size(); j++) {
+				tempSum += allData[lineNum][j];
+				if (tempSum > maxSum)
+					maxSum = tempSum;
 			}
 		}
 
@@ -212,9 +204,7 @@ void maxSumSubArray_2(std::vector<std::vector<int> > allData, std::vector<std::v
 		// Push allData[lineNum][i] from index maxSumStart to maxSumEnd onto resultsData.
 		resultsData.clear();
 
-		for (long long int i = maxSumBegin; i <= maxSumEnd; i++) {
-			resultsData.push_back(allData[lineNum][i]);
-		}
+		resultsData = getSubArray(allData[lineNum]);
 
 		// Push resultsData onto results.
 		results.push_back(resultsData);
@@ -432,7 +422,7 @@ std::vector<int> getSubArray(std::vector<int> arr) {
 /* CITATIONS: Code adapted from the following sources:
 [1] http://en.cppreference.com/w/cpp/chrono/high_resolution_clock/now
 [2] https://github.com/julycoding/The-Art-Of-Programming-By-July/blob/master/ebook/en/07.0.md
-[3] http://cpluspluscode.blogspot.com/2012/11/maximum-subarray-problem.html
+[3] https://users.cs.fiu.edu/~weiss/dsaa_c++/code/MaxSumTest.cpp
 [4] http://stackoverflow.com/questions/12774207/fastest-way-to-check-if-a-file-exist-using-standard-c-c11-c
 [5] http://stackoverflow.com/questions/26084885/appending-to-a-file-with-ofstream
 */
