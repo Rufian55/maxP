@@ -247,7 +247,7 @@ long long int maxSumSubArray_3(std::vector<int> arr, int start, int end) {
 }
 
 /* The iterative method that scans the array left to right, keeping the best
-   sum and current sum. Runs O(n). */
+   sum and current sum. Runs O(n). [4] */
 void maxSumSubArray_4(std::vector<std::vector<int> > allData, std::vector<std::vector<int> > &results, int showTime) {
 	std::vector<int> resultsData;	// 1D int vector to capture the maxSumSubarray elements.
 	std::vector<int> mssTotal;	// 1D int vector (of length 1) to capture the maxSumSubarray total.
@@ -312,7 +312,7 @@ void maxSumSubArray_4(std::vector<std::vector<int> > allData, std::vector<std::v
 }
 
 
-// Uses stat() to check for file existence. [4]
+// Uses stat() to check for file existence. [5]
 bool fileExists(std::string fileName) {
 	struct stat buffer;
 	return (stat(fileName.c_str(), &buffer) == 0);
@@ -322,7 +322,7 @@ bool fileExists(std::string fileName) {
 // Appends results data to text file. //cout's are for testing.
 void append2file(std::vector<std::vector<int> > &results) {
 
-	// Open the results file for appending.	[5]
+	// Open the results file for appending.	[6]
 	std::ofstream resultFile("MSS_Results.txt", std::ios_base::app);
 
 	int skipLines = 0;
@@ -330,7 +330,7 @@ void append2file(std::vector<std::vector<int> > &results) {
 	for (unsigned int i = 0; i < results.size(); i++) {
 		skipLines++;
 		for (unsigned int j = 0; j < results[i].size(); j++) {
-			if(OK_2_DISPLAY_2_STDOUT){
+			if(OK_2_DISPLAY_2_STDOUT == 1){
 				cout << results[i][j];
 				cout << " ";
 			}
@@ -340,7 +340,7 @@ void append2file(std::vector<std::vector<int> > &results) {
 			}
 		}
 
-		if (OK_2_DISPLAY_2_STDOUT) {
+		if (OK_2_DISPLAY_2_STDOUT == 1) {
 			cout << '\n';
 		}
 		else {
@@ -348,7 +348,7 @@ void append2file(std::vector<std::vector<int> > &results) {
 		}
 
 		if (skipLines % 3 == 0) {
-			if (OK_2_DISPLAY_2_STDOUT) {
+			if (OK_2_DISPLAY_2_STDOUT == 1) {
 				cout << '\n';
 			}
 			else {
@@ -423,6 +423,7 @@ std::vector<int> getSubArray(std::vector<int> arr) {
 [1] http://en.cppreference.com/w/cpp/chrono/high_resolution_clock/now
 [2] https://github.com/julycoding/The-Art-Of-Programming-By-July/blob/master/ebook/en/07.0.md
 [3] https://users.cs.fiu.edu/~weiss/dsaa_c++/code/MaxSumTest.cpp
-[4] http://stackoverflow.com/questions/12774207/fastest-way-to-check-if-a-file-exist-using-standard-c-c11-c
-[5] http://stackoverflow.com/questions/26084885/appending-to-a-file-with-ofstream
+[4] Introduction to Algorithms, 3rd ed., CLRS, pg. 214, Minimum and Maximum Algorithm.
+[5] http://stackoverflow.com/questions/12774207/fastest-way-to-check-if-a-file-exist-using-standard-c-c11-c
+[6] http://stackoverflow.com/questions/26084885/appending-to-a-file-with-ofstream
 */
