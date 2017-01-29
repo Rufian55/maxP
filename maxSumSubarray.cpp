@@ -6,7 +6,7 @@
 *
 * Program maxSumSubarray.cpp reads a text file of space delimited ints and 
 * appends the Maximum Sum Subarray and sum of each line to a seperate text
-* file. Compile with: g++ maxSumSubarray.cpp -o maxSum -g -Wall -std=c++11
+* file. Compile with: g++ maxSumSubarray.cpp -o maxSub -g -Wall -std=c++11
 * Call from CLI: "maxSum 1" to show with execution times, "maxSum 0" otherwise.
 ******************************************************************************/
 #include "maxSumSubarray.hpp"
